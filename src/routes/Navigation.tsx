@@ -1,33 +1,47 @@
-import {BrowserRouter, NavLink, Routes,Route, Navigate} from "react-router-dom";
+import {
+  BrowserRouter,
+  NavLink,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { Suspense } from "react";
+import { LazyPage1, LazyPage2, LazyPage3 } from "../01-lazyload/pages/index";
 import logo from "../logo.svg";
 import "./Navigation.css";
-export const Navigation = ()=>{
-return(
+import { routes } from "./routes";
+export const Navigation = () => {
+  return (
+    <Suspense fallback={null}>
     <BrowserRouter>
-        <div className="main-layout">
-            <nav>
-                <img src ={logo} alt="react logo"></img>
-            </nav>
-            <ul>
-                <li>
-                    <NavLink  className ={({isActive}:any)=>isActive?'nav-active':''} to ="/home">Home</NavLink>
-                </li>
-                <li>
-                    <NavLink to ="/about">About</NavLink>
-                </li>
-                <li>
-                    <NavLink to ="/users">Users</NavLink>
-                </li>
-            </ul>
-            <Routes>
-                <Route path="about" element={<h1>About page</h1>}/>
-                <Route path="users" element={<h1>Users page</h1>}/>
-                <Route path="home" element={<h1>Home page</h1>}/>
-                <Route path="/*" element={<Navigate to="/home" replace/>}  />
-            </Routes>
-        </div>
-        
-
+      <div className="main-layout">
+       
+        <ul>
+          {routes.map((route) => (
+            <li key={route.to}>
+              <NavLink
+                className={({ isActive }: any) =>
+                  isActive ? "nav-active" : ""
+                }
+                to={route.to}
+              >
+                {route.name}
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+        <Routes>
+          {routes.map((route)=>{
+            console.log("route", route);
+            return(
+            <Route key={route.path} path={route.to} element={<route.Component />} />
+          )})}
+          
+         
+          
+        </Routes>
+      </div>
     </BrowserRouter>
-)
-}
+    </Suspense>
+  );
+};
